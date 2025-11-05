@@ -1,0 +1,25 @@
+{
+    "server": "RSA timing lab server",
+    "public": {
+        "public_key_size_bits": 1024,
+        "public_modulus_hex": "9d7113232d0c3e6be3815fa6bcb431c29d8b38574f522126835734a685a49d7b735e933a1b7b9cf218211265d658d99d9ec2c44e04aabe8997c0d15f52a9f60b2534e8c9f29f50e051403a7fcd8c6d9db3cd62cd474ad78a24416af3aceffde9fa17de1b732d048b608364e2b99569255a525472baf1efacccefef705334b4b7",
+        "public_exponent_dec": "65537"
+    },
+    "apis": [
+        {
+            "method": "GET",
+            "path": "/",
+            "description": "Return debug information (this JSON)."
+        },
+        {
+            "method": "GET",
+            "path": "/encrypt?p=<hex plaintext>&r=<repeats>",
+            "description": "Encrypt a plaintext; optional r repeats to amplify timing (default 1, max 2000)."
+        },
+        {
+            "method": "GET",
+            "path": "/decrypt?c=<hex ciphertext>&r=<repeats>",
+            "description": "Decrypt a ciphertext; optional r repeats to amplify timing (default 1, max 2000)."
+        }
+    ]
+}
