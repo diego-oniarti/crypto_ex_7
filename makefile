@@ -4,7 +4,7 @@ MAIN  = main.cpp
 OBJ   = $(SRC:src/%.cpp=obj/%.o) obj/main.o
 CXX   = g++
 CXXFLAGS = -g -O3 -I./src -std=c++17
-LDFLAGS  = -lcurl
+LDFLAGS  = -lcurl -lgmpxx -lgmp
 HEAD  = $(wildcard src/*.h)
 
 $(OUT): $(OBJ)
@@ -21,7 +21,7 @@ obj/main.o: $(MAIN)
 
 .PHONY: clean
 clean:
-	rm -rf bin obj
+	rm -rf bin obj progress
 
 .PHONY: run
 run: $(OUT)
