@@ -14,11 +14,11 @@ int main(int argc, char *argv[]) {
     if (res) return (int)res;
 
 #ifdef DEBUG
-    std::string cypher_str = "09b9e926d8f0c868723d19e9931ddadadde87caa06e92e832920058369398bddc359e233c08fd50f61ab15ef28f01b81d1b402144f14013c13c141818e993a41744239815b4d71a400937b1ecafb07207c70f2fad2796bbb94bbf9669655e81a17825c9f5c0538d6584b03f131e54822121984acb9fae4bef00b19cc7a2da087";
-    std::string modulo_str = "a093edb98a93189211f232572d3e9204e652690bdedb91641565fe91640410f388fd155c5ac7c00a132b0066bc021d8189249000fe9befeeadc9a91e4806becbecbe5835f71179b43803100586cddf4cbfa9410c1bf7aa0b7a86deb8924659c7b8f1fee25e80ddd97f9524eebc25c1dd73dda168c57c0c92d06b73c2afdb5c09";
+    std::string cypher_str = "00dda05e8c45f2abaa1c0e6cb26ccb97d665b7f418cd39973b9ee9cee922592c1509193f044787ef9d9d84b1d6a1d51b8681aa7d508e3e6b29edb95cdeeb42713c2891f032617521d1d8a728b3737142168f38e5c09b8609cbcd8956fbc2abd6771dce68a95283833100ce814b6de0c41d80b647dc7a0874b78023b34948cedc88";
+    std::string modulo_str = "e916513f25cdd6fb9ab0a8ae98a081dd8f448b9926d4f1974a87e8dad23ade3b9c6c73d7720a2fb210feeef4c3bea2cf5a9a7374ab8b40e14f30f66d484d21585692e845fe34e5c60831f1389d4714f83209cba7be41adced0547dc29d8bf5d19bb94d5c728ee15118dba537572a020f5560b1ecc7ab2de9ab8c4f3129c57539";
 #else
-    std::string cypher_str = "2D38AEB156EF11BC165989A12669B30CF20CDA8A196288A2A24262C9B43BD715BA76DBD8C42337D4EC0D7D40A77FE4A5F37A5A59E0E5E5506ABB588225D5F3483F4F4BDE4E3771CEC55F12C0DCCA56F5D9A3110BC50DC47D7D04DB8E4E57044574CA101301C1EFC64A497AF420B286FE6BAF3A4ADC883A2ED24956C8EB502817";
-    std::string modulo_str = "9D7113232D0C3E6BE3815FA6BCB431C29D8B38574F522126835734A685A49D7B735E933A1B7B9CF218211265D658D99D9EC2C44E04AABE8997C0D15F52A9F60B2534E8C9F29F50E051403A7FCD8C6D9DB3CD62CD474AD78A24416AF3ACEFFDE9FA17DE1B732D048B608364E2B99569255A525472BAF1EFACCCEFEF705334B4B7";
+    std::string cypher_str = "2d38aeb156ef11bc165989a12669b30cf20cda8a196288a2a24262c9b43bd715ba76dbd8c42337d4ec0d7d40a77fe4a5f37a5a59e0e5e5506abb588225d5f3483f4f4bde4e3771cec55f12c0dcca56f5d9a3110bc50dc47d7d04db8e4e57044574ca101301c1efc64a497af420b286fe6baf3a4adc883a2ed24956c8eb502817";
+    std::string modulo_str = "9d7113232d0c3e6be3815fa6bcb431c29d8b38574f522126835734a685a49d7b735e933a1b7b9cf218211265d658d99d9ec2c44e04aabe8997c0d15f52a9f60b2534e8c9f29f50e051403a7fcd8c6d9db3cd62cd474ad78a24416af3aceffde9fa17de1b732d048b608364e2b99569255a525472baf1efacccefef705334b4b7";
 #endif
     bigint c(cypher_str.c_str(), 16);
     bigint n(modulo_str.c_str(), 16);
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 
         // 2.a
         if (i==1) {
-            s = n/(3*B);
+            s = ceildiv(n, 3*B);
             if (saved_s != -1) s = saved_s;
             while (!checkPKCS(RSA(c,s,e,n))) {
                 s++;
@@ -57,9 +57,8 @@ int main(int argc, char *argv[]) {
             fclose(f);
 
         } else if (M_prev.size()>=2) { // 2.b
-            std::cout << "2b\n";
             while (!checkPKCS(RSA(c,++s,e,n))) {
-                std::cout << s << "\n";
+                std::cout << "2b: " << s << "\n";
             }
         } else if (M_prev.size()==1) { // 2.c
             std::cout << "2c\n";
@@ -71,9 +70,9 @@ int main(int argc, char *argv[]) {
             while (true) {
                 std::cout << "r: " << r << "\n";
                 bigint s_min = ceildiv(2*B + r*n, b);
-                bigint s_max = (3*B -1 + r*n) / a;
+                bigint s_max = ceildiv(3*B + r*n, a);
 
-                for (s = max(s,s_min); s<=s_max; s++) {
+                for (s = max(s,s_min); s<s_max; s++) {
                     if (checkPKCS(RSA(c,s,e,n))) goto step2Cend;
                 }
 
