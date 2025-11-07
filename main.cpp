@@ -55,7 +55,6 @@ int main(int argc, char *argv[]) {
             FILE *f = fopen(PROGFILE, "w");
             gmp_fprintf(f, "s: %Zd\n", s.get_mpz_t());
             fclose(f);
-
         } else if (M_prev.size()>=2) { // 2.b
             while (!checkPKCS(RSA(c,++s,e,n))) {
                 std::cout << "2b: " << s << "\n";
@@ -138,9 +137,6 @@ step2Cend:
     }
     fprintf(fout, "\n");
     fclose(fout);
-
-    return 0;
-
 
     return 0;
 }

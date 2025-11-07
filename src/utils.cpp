@@ -35,7 +35,6 @@ size_t curlWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata) {
 }
 
 bool checkPKCS(bigint msg) {
-a:
 #ifdef DEBUG
     std::string BASE_URL = "127.0.0.1:8000/decrypt?c=";
 #else
@@ -44,6 +43,7 @@ a:
     std::string HEX = write_hex(msg);
     std::string URL = BASE_URL+HEX;
 
+a:
     CURL *curl;
 
     curl = curl_easy_init();
