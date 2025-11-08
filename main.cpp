@@ -81,17 +81,22 @@ int main(int argc, char *argv[]) {
 step2Cend:
 
         // Step 3
-        M.clear();
         M_t tmpM;
         for (interval_t inter: M_prev) {
-            for (bigint r = ceildiv(inter.first*s-3*B+1, n); r <= (inter.second*s-2*B)/n; r++) {
+            for (
+                    bigint r = ceildiv(inter.first*s - 3*B + 1, n);
+                    r <= (inter.second*s - 2*B)/n;
+                    r++
+                ) {
                 bigint a = max(inter.first, ceildiv(2*B+r*n, s));
                 bigint b = min(inter.second, (3*B -1+r*n)/s);
                 if (a<=b) tmpM.insert({{a,b}});
+                else std::cerr << "What?!" << std::endl;
             }
         }
 
         // Merge overlap
+        M.clear();
         for (interval_t nuovo: tmpM) {
             auto it = M.begin();
             while (it!=M.end()) {
@@ -111,7 +116,7 @@ step2Cend:
         i++;
 
         if (M.empty()) {
-            std::cout << "AAAAAAAA" << std::endl;
+            std::cerr << "AAAAAAAA" << std::endl;
             exit(1);
         }
     }while(M.size()!=1 || M.begin()->first!=M.begin()->second);
