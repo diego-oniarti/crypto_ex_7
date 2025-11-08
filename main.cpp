@@ -1,3 +1,13 @@
+/*
+ * Authors: Diego Oniarti, Alessandro Marostica
+ * Team:    Mango
+ *
+ * m:
+ * 00 02 ffffb310dece2e564839665947096cc502677a7902912a2383926818568df045ddd6cc3c23120bdb031facef9c2f088c95f6d9d5b303ada275a2ed48f3839e79d51819d8f56049de67ffd8c027ded7504390205ca071396c82827ee47ddff4223b18a86b306e61bd7c8ee540d8341b59a284ddbd9cd1c1f99e02d9677209
+ *
+ * m does not appear to follow the PKCS format `00 02 padding 00 data` as there is no zero byte to terminate the padding
+ */
+
 #include "utils.h"
 
 #include <cstdint>
@@ -22,7 +32,7 @@ int main(int argc, char *argv[]) {
 #endif
     bigint c(cypher_str.c_str(), 16);
     bigint n(modulo_str.c_str(), 16);
-    bigint e = 65537;
+    bigint e = 65537; // From the oracle
 
     int k = 1024/8; // From the oracle
     bigint B(1);
@@ -31,6 +41,7 @@ int main(int argc, char *argv[]) {
     bigint s(1);      // remark
     M_t M {{2*B, 3*B-1}};
 
+    // Load the s_1 if it was saved by a previous run of the program
     bigint saved_s = -1;
     if (std::filesystem::exists(PROGFILE)) {
         FILE *prog = fopen(PROGFILE, "r");
@@ -39,11 +50,11 @@ int main(int argc, char *argv[]) {
 
     bigint i=1;
     do {
+        // s_i-1 and M_i-1
         bigint s_prev = s;
         M_t M_prev = M;
 
-        // 2.a
-        if (i==1) {
+        if (i==1) { // 2.a
             s = ceildiv(n, 3*B);
             if (saved_s != -1) s = saved_s;
             while (!checkPKCS(RSA(c,s,e,n))) {
@@ -52,20 +63,18 @@ int main(int argc, char *argv[]) {
             }
             std::cout << "Found s: " << s << std::endl;
 
+            // Save s_1
             FILE *f = fopen(PROGFILE, "w");
             gmp_fprintf(f, "s: %Zd\n", s.get_mpz_t());
             fclose(f);
         } else if (M_prev.size()>=2) { // 2.b
-            while (!checkPKCS(RSA(c,++s,e,n))) {
-                std::cout << "2b: " << s << "\n";
-            }
+            while (!checkPKCS(RSA(c,++s,e,n))) std::cout << "2b: " << s << "\n";
         } else if (M_prev.size()==1) { // 2.c
             std::cout << "2c\n";
             bigint a = M_prev.begin()->first;
             bigint b = M_prev.begin()->second;
 
-            bigint r = ceildiv(2 * (b * s_prev - 2 * B), n);
-
+            bigint r = ceildiv(2 * (b*s_prev - 2*B), n);
             while (true) {
                 std::cout << "r: " << r << "\n";
                 bigint s_min = ceildiv(2*B + r*n, b);
@@ -95,7 +104,7 @@ step2Cend:
             }
         }
 
-        // Merge overlap
+        // Merge overlaps
         M.clear();
         for (interval_t nuovo: tmpM) {
             auto it = M.begin();
@@ -123,7 +132,7 @@ step2Cend:
     curl_global_cleanup();
 
     // step 4
-    bigint m = M.begin()->first;
+    bigint m = (M.begin()->first) % n;
     std::cout << "m:\n" << std::setfill('0') << std::setw(256) << std::hex << m << std::endl;
 
     std::cout << "\n";
