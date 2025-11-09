@@ -131,6 +131,8 @@ step2Cend:
     }while(M.size()!=1 || M.begin()->first!=M.begin()->second);
     curl_global_cleanup();
 
+    std::cout << "s:\n" << std::setfill('0') << std::setw(256) << std::hex << s << std::endl;
+
     // step 4
     bigint m = (M.begin()->first) % n;
     std::cout << "m:\n" << std::setfill('0') << std::setw(256) << std::hex << m << std::endl;
