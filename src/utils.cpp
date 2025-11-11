@@ -38,7 +38,7 @@ bool checkPKCS(bigint msg) {
 #ifdef DEBUG
     std::string BASE_URL = "127.0.0.1:8000/decrypt?c=";
 #else
-    std::string BASE_URL = "https://juicy-allyn-mystic-rogue-04c667cf.koyeb.app//decrypt?c=";
+    std::string BASE_URL = "https://juicy-allyn-mystic-rogue-04c667cf.koyeb.app/decrypt?c=";
 #endif
     std::string HEX = write_hex(msg);
     std::string URL = BASE_URL+HEX;
